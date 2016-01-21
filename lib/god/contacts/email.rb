@@ -112,10 +112,17 @@ Category: #{category}
           args << arg(:server_password)
           args << arg(:server_auth)
         end
-
-        Net::SMTP.start(*args) do |smtp|
+        
+        #Adding tls support for office 365
+        smtp_client=Net::SMTP.new(arg(:server_host),arg(:server_port))
+        smtp_client.enable_starttls_auto
+        smtp_client.start(arg(:server_domain),arg(:server_user), arg(:server_password),arg(:server_auth)) do |smtp|
           smtp.send_message(mail, arg(:from_email), arg(:to_email))
         end
+
+        #Net::SMTP.start(*args) do |smtp|
+        #  smtp.send_message(mail, arg(:from_email), arg(:to_email))
+        #end
       end
 
       def notify_sendmail(mail)
